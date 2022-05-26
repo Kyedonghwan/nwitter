@@ -1,4 +1,4 @@
-import { dbService } from "fbInstance";
+import { dbService, storageService } from "fbInstance";
 import React, {useState} from "react";
 
 const Nweet = ({nweetObj, isOwner}) => {
@@ -7,6 +7,7 @@ const Nweet = ({nweetObj, isOwner}) => {
         if(ok){
             await dbService.doc(`nweets/${nweetObj.id}`).delete();
             //delete nweet
+            await storageService.refFromURL(nweetObj.attachmentUrl).delete();
         }
     }
 
@@ -30,6 +31,7 @@ const Nweet = ({nweetObj, isOwner}) => {
         {
             editing ? <><form onSubmit={onSubmit}><input type="text" value={newNweet} onChange={onChange} placeholder="Eidt your nweet" required/><input type="submit" value="update Nweet" /></form><button onClick={toggleEditing}>Cancel</button></> :<>
             <h4>{nweetObj.text}</h4>
+            {nweetObj.attachmentUrl && <img src={nweetObj.attachmentUrl} width="50" height="50" />}
             {isOwner && <><button onClick={onDeleteClick}>Delete Nweet</button>
             <button onClick={toggleEditing}>Edit Nweet</button></>}</>
         }
